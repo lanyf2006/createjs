@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>game</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="x-ua-Compatible" content="IE=Edge,chrome=1">
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <style>
+        .demp-wrap{
+            border: 1px solid #ccc;
+            width: 667px;
+            height: 375px;
+            margin: -187px 0 0 -333px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+        }
+    </style>
+</head>
+<body>
+<div class="demp-wrap">
+    <canvas id="demo" width="667" height="375"></canvas>
+</div>
+<script src="js/easeljs.min.js"></script>
+<script>
+    var canvas = document.getElementById('demo'),
+        stage = new createjs.Stage(canvas);
+    var groundImage = 'images/ground.png';
+    var stageHeight = canvas.height;
+    var stageWidth = canvas.width;
+    var blockHeight = 70;
+    //var character;
+
+    var spritesheet;
+    var characterHeight = 96;
+    var characterGround = stageHeight - blockHeight - characterHeight;
+
+    var moveLeft = false;
+    var moveRight = false;
+    var isJumping = false;
+    var xVel = 5;
+    var yVel = 0;
+    var gravity = 1.2;
+    var KEYCODE_UP =38;
+    var KEYCODE_LEFT =37;
+    var KEYCODE_RIGHT =39;
+
+    window.onload = function () {
+
+        function setup() {
+            //生成地面游戏区域
+            var ground = new createjs.Bitmap(groundImage);
+            for(i=0;i<10;i++){
+                var tempBlockGround = ground.clone();
+                tempBlockGround.x = i*70;
+                tempBlockGround.y = stageHeight - blockHeight;
+                stage.addChild(tempBlockGround);
+            }
+
+            //生成动画人物所需的sprite
+            spritesheet = new createjs.SpriteSheet({
+                'images':['images/charactor.png'],
+                'frames':{'height':96,'count':10,width:75},
+                'animations':{run:[0,9]}
+            });
+            character = new createjs.Sprite(spritesheet);
+            character.framerate = 30;
+            character.x = 50;
+            character.y = characterGround;
+            stage.addChild(character);
+
+            //character.play();
+            createjs.Ticker.addEventListener('tick',tick);
+
+            document.onkeydown = handleKeyDown;
+            document.onkeyup = handleKeyUp;
+        }
+        function handleKeyDown(e) {
+            switch (e.keyCode){
+                case KEYCODE_UP:
+                case 87://N
+                    jump();
+                    break;
+                case KEYCODE_LEFT:
+                case 65:  //A
+                    moveLeft = true;
+                    character.play();
+                    break;
+                case KEYCODE_RIGHT:
+                case 68:  //D
+                    moveRight = true;
+                    character.play();
+                    break
+            }
+        }
+        
+        function handleKeyUp(e) {
+            switch (e.keyCode){
+                case KEYCODE_LEFT:
+                case 65:
+                    moveLeft = false;
+                    character.gotoAndStop(0);
+                    break;
+                case KEYCODE_RIGHT:
+                case 68:
+                    moveRight = false;
+                    character.gotoAndStop(0);
+                    break;
+            }
+            
+        }
+        
+        
+        function jump() {
+            if(isJumping == false){
+                yVel = -15;
+                isJumping = true;
+            }
+
+        }
+        function tick(event) {
+            if(moveLeft){
+                character.x -= xVel;
+                if(character.scaleX>0){
+                    character.scaleX *= -1;
+                    character.x += 100;
+                }
+            }else if(moveRight){
+                character.x += xVel;
+                if(character.scaleX < 0){
+                    character.scaleX *= -1;
+                    character.x -=100;
+                }
+            }
+            if(isJumping){
+                yVel += gravity;
+                character.y += yVel;
+                if(character.y > characterGround){
+                    character.y = characterGround;
+                    yVel = 0;
+                    isJumping = false;
+                }
+            }
+            stage.update();
+        }
+        setup();
+
+    };
+
+</script>
+</body>
+</html>
