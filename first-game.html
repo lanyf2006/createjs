@@ -8,7 +8,7 @@
     <meta name="keywords" content="">
     <meta name="description" content="">
     <style>
-        .demp-wrap{
+        .demo-wrap{
             border: 1px solid #ccc;
             width: 667px;
             height: 375px;
@@ -20,7 +20,7 @@
     </style>
 </head>
 <body>
-<div class="demp-wrap">
+<div class="demo-wrap">
     <canvas id="demo" width="667" height="375"></canvas>
 </div>
 <script src="js/easeljs.min.js"></script>
@@ -34,7 +34,7 @@
     //var character;
 
     var spritesheet;
-    var characterHeight = 96;
+    var characterHeight = 96;    //动画人物的高度
     var characterGround = stageHeight - blockHeight - characterHeight;
 
     var moveLeft = false;
@@ -62,10 +62,10 @@
             //生成动画人物所需的sprite
             spritesheet = new createjs.SpriteSheet({
                 'images':['images/charactor.png'],
-                'frames':{'height':96,'count':10,width:75},
+                'frames':{'height':96,'count':10,width:75},   //定义动画帧，包括高度，宽度，总帧数等等
                 'animations':{run:[0,9]}
             });
-            character = new createjs.Sprite(spritesheet);
+            character = new createjs.Sprite(spritesheet);   //生成动画人物
             character.framerate = 30;
             character.x = 50;
             character.y = characterGround;
